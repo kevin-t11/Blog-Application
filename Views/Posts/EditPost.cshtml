@@ -1,5 +1,31 @@
-<h1>
-  Edit Your Post
-</h1>
+@model PostViewModel
 
-@Html.Partial("_UpdateForm")
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">Edit Your Post</h2>
+        </div>
+    </div>
+
+    @Html.Partial("_UpdateForm")
+
+    <div id="updateMessage" class="mt-3 text-center"></div>
+
+    @section Scripts {
+        <script>
+            // JavaScript code for handling the update message
+            $(document).ready(function () {
+                var updateMessage = $('#updateMessage');
+                var urlParams = new URLSearchParams(window.location.search);
+                var updated = urlParams.get('updated');
+
+                if (updated === 'true') {
+                    updateMessage.text('Post updated successfully!');
+                    setTimeout(function () {
+                        updateMessage.text('');
+                    }, 3000); // Clear message after 3 seconds
+                }
+            });
+        </script>
+    }
+</div> <!-- End of container div -->

@@ -1,15 +1,64 @@
 @model PostViewModel
 
-<div class="post">
-    <h2>@Model.Post.Title</h2>
-    <h5>Created At: @Model.Post.CreatedAt</h5>
-    <h5>Last Modified At: @Model.Post.UpdatedAt</h5>
-    <p>@Model.Post.Body</p>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">@Model.Post.Title</h1>
+            <p class="card-subtitle text-muted">Created At: @Model.Post.CreatedAt.ToString("MMMM dd, yyyy")</p>
+            <p class="card-subtitle text-muted">Last Modified At: @Model.Post.UpdatedAt.ToString("MMMM dd, yyyy")</p>
+            <hr />
+            <p class="card-text">@Model.Post.Body</p>
+        </div>
+    </div>
+
+    <div class="mt-3 text-center">
+        <!-- Centered buttons -->
+        <a class="btn btn-primary mx-2" asp-area="" asp-controller="Posts" asp-action="EditPost" asp-route-id="@Model.Post.Id">Edit</a>
+        <button class="btn btn-danger mx-2" onclick="deletePost(@Model.Post.Id)">Delete</button>
+    </div>
+
+    <div id="deleteMessage" class="mt-3 text-center text-success"></div>
+
+    <div id="updateMessage" class="mt-3 text-center text-success"></div>
 </div>
 
-<div class="post-actions">
-  <ul>
-    <li><a class="btn btn-primary" asp-area="" asp-controller="Posts" asp-action="EditPost" asp-route-id="@Model.Post.Id">Update</a></li>
-    <li><input type="submit" class="btn btn-danger" value="Delete" onClick="deletePost(@Model.Post.Id)" /></li>
-  </ul>
-</div>
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                var updateMessage = $('#updateMessage');
+                var urlParams = new URLSearchParams(window.location.search);
+                var updated = urlParams.get('updated');
+
+                if (updated === 'true') {
+                    updateMessage.text('Post updated successfully!');
+                    setTimeout(function () {
+                        updateMessage.text('');
+                        // Redirect to ViewPost page
+                        window.location.href = '/Posts/ViewPost?id=' + @Model.Post.Id;
+                    }, 1000); // Redirect after 2 seconds (2000 milliseconds)
+                }
+            });
+            function deletePost(postId) {
+                // Assuming you are using AJAX to delete the post
+                $.ajax({
+                    url: '/Posts/Delete', // Corrected the URL
+                    type: 'POST',
+                    data: { id: postId }, // Use 'id' instead of 'postId' here
+                    success: function (result) {
+                        // Handle success, for example, display a success message
+                        $('#deleteMessage').text('Post deleted successfully!');
+                        // Optionally, redirect the user after a short delay
+                        setTimeout(function () {
+                            window.location.href = '/Posts/Index';
+                        }, 1000); // Redirect after 2 seconds (2000 milliseconds)
+                    },
+                    error: function () {
+                        // Handle errors, show an error message to the user, etc.
+                        console.log('Error occurred while deleting the post.');
+                    }
+                });
+            }
+        </script>
+    }
+</div> <!-- End of container div -->

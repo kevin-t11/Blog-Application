@@ -64,8 +64,6 @@ public class PostsController : Controller
                         post.Id = reader.GetInt32(0);
                         post.Title = reader.GetString(1);
                         post.Body = reader.GetString(2);
-                        post.CreatedAt = reader.GetDateTime(3);
-                        post.UpdatedAt = reader.GetDateTime(4);
                     }
                     else
                     {
@@ -101,8 +99,6 @@ public class PostsController : Controller
                                     Id = reader.GetInt32(0),
                                     Title = reader.GetString(1),
                                     Body = reader.GetString(2),
-                                    CreatedAt = reader.GetDateTime(3),
-                                    UpdatedAt = reader.GetDateTime(4)
                                 });
                         }
                     }
@@ -125,9 +121,16 @@ public class PostsController : Controller
 
     public ActionResult Insert(PostModel post)
     {
+        // Validate the length of post.Body
+        if (post.Body.Length > 5000)
+        {
+            // Body length exceeds the limit, redirect with failure flag
+            return RedirectToAction("NewPost", new { inserted = "false" });
+        }
+
         post.CreatedAt = DateTime.Now;
         post.UpdatedAt = DateTime.Now;
-        
+
         using (SqliteConnection connection = new SqliteConnection(_configuration.GetConnectionString("BlogDataContext")))
         {
             using (var command = connection.CreateCommand())
@@ -137,18 +140,22 @@ public class PostsController : Controller
                 try
                 {
                     command.ExecuteNonQuery();
+                    // Post added successfully, redirect with success flag
+                    return RedirectToAction("NewPost", new { inserted = "true" });
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    // Failed to add post, redirect with failure flag
+                    return RedirectToAction("NewPost", new { inserted = "false" });
                 }
             }
         }
-
-        return RedirectToAction(nameof(Index));
     }
 
-    public ActionResult Update(PostModel post)
+
+
+    public IActionResult Update(PostModel post)
     {
         post.UpdatedAt = DateTime.Now;
 
@@ -165,30 +172,32 @@ public class PostsController : Controller
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    // Optionally handle errors here
+                    return RedirectToAction("EditPost", new { id = post.Id, updated = "false" });
                 }
             }
         }
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("ViewPost", new { id = post.Id, updated = "true" });
     }
+
+
 
     [HttpPost]
     public JsonResult Delete(int id)
     {
-        using (SqliteConnection connection =
-                new SqliteConnection(_configuration.GetConnectionString("BlogDataContext")))
+        using (SqliteConnection connection = new SqliteConnection(_configuration.GetConnectionString("BlogDataContext")))
         {
             using (var command = connection.CreateCommand())
             {
                 connection.Open();
-                command.CommandText = $"DELETE from post WHERE Id = '{id}'";
+                command.CommandText = $"DELETE from post WHERE Id = {id}";
                 command.ExecuteNonQuery();
             }
         }
 
-        return Json(new Object{});
+        return Json(new { success = true });
     }
-
 
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

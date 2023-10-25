@@ -1,11 +1,36 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - My Blog</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .navbar-nav .nav-link {
+            transition: color 0.3s; /* Smooth transition for link color */
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: #007bff; /* Change link color on hover or when active */
+        }
+
+        .navbar-toggler-icon {
+            background-image: none; /* Remove default background image for navbar toggler */
+        }
+
+        .navbar-toggler {
+            border: none; /* Remove border for navbar toggler button */
+        }
+
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow to the navbar */
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -16,18 +41,39 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center w-100">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        @if (Context.Request.HttpContext.Session.GetString("Username") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="Posts" asp-action="Index">Posts</a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="Index">Posts</a>
+                            <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="Team" asp-action="Team">Our Team</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="Contact" asp-action="Contact">Contact Us</a>
                         </li>
+                       
                     </ul>
+                    <div class="d-flex">
+                        @if (Context.Request.HttpContext.Session.GetString("Username") == null)
+                        {
+                            <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="User" asp-action="Login">Login</a>
+                            <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="User" asp-action="Register">Register</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-dark me-2" asp-area="" asp-controller="User" asp-action="Logout">Logout</a>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>

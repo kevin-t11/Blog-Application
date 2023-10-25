@@ -1,0 +1,45 @@
+﻿@model List<TeamMember>
+
+<div class="container">
+    <h1 class="text-center mb-4">Meet Our Team</h1>
+    <div class="row justify-content-center">
+        @foreach (var member in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 text-center">
+                    <img src="~/images/profile.jpg" class="card-img-top team-member-img" alt="@member.Name">
+                    <div class="card-body">
+                        <h2 class="card-title">@member.Name</h2>
+                        <p class="card-text"><strong>Role:</strong> @member.Role</p>
+                        <p class="card-text">@member.Description</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .team-member-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin: 0 auto;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+</style>

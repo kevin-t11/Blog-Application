@@ -3,26 +3,69 @@
 }
 @model PostViewModel
 
-<div class="text-center">
-  <h1 class="display-4">My Latest Posts</h1>
-</div>
-
-<div class="text-right">
-  <a asp-area="" asp-controller="Posts" asp-action="NewPost">New Post</a>
-</div>
-
-<div class="row justify-content-center">
-  <div class="col-xl-6 col-lg-8 col-md-8 col-sm-10">
-    <div class="posts-container">
-    @foreach (var p in Model.PostList)
-    {
-      <div class="post">
-        <h2><a asp-area="" asp-controller="Posts" asp-action="ViewPost" asp-route-id="@p.Id">@p.Title</a></h2>
-        <h5 class="text-muted">@p.UpdatedAt</h5>
-        <p>@p.Body</p>
-      </div>
-    }
+<div class="container">
+    <div class="text-center mt-5 mb-4">
+        <h1 class="display-4">Explore My Latest Posts</h1>
     </div>
-  </div>
+
+    <div class="text-center mb-4">
+        <a class="btn btn-primary" asp-area="" asp-controller="Posts" asp-action="NewPost">New Post</a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="posts-container">
+                @foreach (var p in Model.PostList)
+                {
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                <a class="text-decoration-none text-dark" asp-area="" asp-controller="Posts" asp-action="ViewPost" asp-route-id="@p.Id">
+                                    @p.Title
+                                </a>
+                            </h2>
+                            <h6 class="card-subtitle mb-2 text-muted">@p.UpdatedAt.ToString("MMMM dd, yyyy")</h6>
+                            <p class="card-text">@Html.Raw(Html.Encode(p.Body).Replace("\n", "<br/>"))</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
+
+<style>
+    .posts-container {
+        margin-top: 30px;
+    }
+
+    .card {
+        border: none;
+        transition: box-shadow 0.3s;
+    }
+
+        .card:hover {
+            box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-title a.post-title {
+        color: #007bff; /* Default link color */
+        text-decoration: none;
+        transition: color 0.3s; /* Smooth transition for link color */
+    }
+
+        .card-title a.post-title:hover {
+            color: blue !important; /* Change link color to blue on hover */
+            text-decoration: underline; /* Add underline on hover */
+        }
+
+    .card-subtitle {
+        color: #6c757d;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        color: #333;
+    }
+</style>
